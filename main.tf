@@ -14,6 +14,8 @@ provider "aws" {
 }
 
 locals {
+  resource_prefix = "${var.project_name}-${var.environment}"
+
   common_tags = merge(
     {
       Environment = var.environment
@@ -27,7 +29,7 @@ locals {
 module "vpc" {
   source = "./modules/vpc"
 
-  project_name       = var.project_name
+  project_name       = local.resource_prefix
   vpc_cidr           = var.vpc_cidr
   azs                = var.azs
   public_subnets     = var.public_subnets
@@ -41,7 +43,7 @@ module "alb" {
 
   vpc_id            = module.vpc.vpc_id
   public_subnet_ids = module.vpc.public_subnet_ids
-  project_name      = var.project_name
+  project_name      = local.resource_prefix
   target_group_port = var.container_port
   health_check_path = var.health_check_path
   tags              = local.common_tags
@@ -50,8 +52,8 @@ module "alb" {
 module "ecs" {
   source = "./modules/ecs"
 
-  cluster_name            = "${var.project_name}-cluster"
-  service_name            = "${var.project_name}-service"
+  cluster_name            = "${local.resource_prefix}-cluster"
+  service_name            = "${local.resource_prefix}-service"
   vpc_id                  = module.vpc.vpc_id
   subnet_ids              = module.vpc.public_subnet_ids
   assign_public_ip        = var.assign_public_ip
