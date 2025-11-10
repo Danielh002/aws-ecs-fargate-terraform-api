@@ -58,8 +58,8 @@ variable "enable_nat_gateway" {
   default     = false
 }
 
-variable "health_check_path" {
-  description = "Path ALB uses for health checks."
+variable "backend_health_check_path" {
+  description = "Path ALB uses for backend health checks."
   type        = string
   default     = "/"
 }
@@ -70,31 +70,31 @@ variable "assign_public_ip" {
   default     = true
 }
 
-variable "desired_count" {
+variable "backend_desired_count" {
   description = "Desired number of tasks in the ECS service."
   type        = number
   default     = 1
 }
 
-variable "container_image" {
+variable "backend_container_image" {
   description = "Container image for the Node.js API."
   type        = string
   default     = "public.ecr.aws/docker/library/node:18-alpine"
 }
 
-variable "container_port" {
+variable "backend_container_port" {
   description = "Application port exposed by the container."
   type        = number
   default     = 3000
 }
 
-variable "task_cpu" {
+variable "backend_task_cpu" {
   description = "CPU units for the Fargate task definition."
   type        = number
   default     = 256
 }
 
-variable "task_memory" {
+variable "backend_task_memory" {
   description = "Memory (MB) for the Fargate task definition."
   type        = number
   default     = 512
@@ -106,20 +106,86 @@ variable "log_retention_in_days" {
   default     = 14
 }
 
-variable "autoscaling_min_capacity" {
+variable "backend_path_patterns" {
+  description = "Path patterns that should be routed to the backend service."
+  type        = list(string)
+  default     = ["/api/*"]
+}
+
+variable "backend_listener_priority" {
+  description = "Listener rule priority for the backend path routing."
+  type        = number
+  default     = 10
+}
+
+variable "backend_autoscaling_min_capacity" {
   description = "Minimum number of tasks for ECS service auto scaling."
   type        = number
   default     = 1
 }
 
-variable "autoscaling_max_capacity" {
+variable "backend_autoscaling_max_capacity" {
   description = "Maximum number of tasks for ECS service auto scaling."
   type        = number
   default     = 2
 }
 
-variable "autoscaling_cpu_threshold" {
+variable "backend_autoscaling_cpu_threshold" {
   description = "Target CPU utilization percentage for auto scaling."
   type        = number
   default     = 60
+}
+
+variable "frontend_container_image" {
+  description = "Container image for the frontend SPA."
+  type        = string
+  default     = "public.ecr.aws/nginx/nginx:stable-alpine"
+}
+
+variable "frontend_container_port" {
+  description = "Application port exposed by the frontend container."
+  type        = number
+  default     = 80
+}
+
+variable "frontend_desired_count" {
+  description = "Desired number of frontend tasks in the ECS service."
+  type        = number
+  default     = 1
+}
+
+variable "frontend_task_cpu" {
+  description = "CPU units for the frontend Fargate task definition."
+  type        = number
+  default     = 256
+}
+
+variable "frontend_task_memory" {
+  description = "Memory (MB) for the frontend Fargate task definition."
+  type        = number
+  default     = 512
+}
+
+variable "frontend_autoscaling_min_capacity" {
+  description = "Minimum number of frontend tasks for ECS service auto scaling."
+  type        = number
+  default     = 1
+}
+
+variable "frontend_autoscaling_max_capacity" {
+  description = "Maximum number of frontend tasks for ECS service auto scaling."
+  type        = number
+  default     = 2
+}
+
+variable "frontend_autoscaling_cpu_threshold" {
+  description = "Target CPU utilization percentage for frontend auto scaling."
+  type        = number
+  default     = 60
+}
+
+variable "frontend_health_check_path" {
+  description = "Path ALB uses for frontend health checks."
+  type        = string
+  default     = "/"
 }
