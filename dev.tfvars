@@ -6,7 +6,7 @@ owner        = "platform-team"
 # Backend container overrides (replace with your ECR image later)
 backend_container_image   = "public.ecr.aws/docker/library/node:18-alpine"
 backend_container_port    = 3000
-backend_health_check_path = "/"
+backend_health_check_path = "/api/health"
 
 # Frontend container overrides (replace with your ECR image later)
 frontend_container_image   = "public.ecr.aws/nginx/nginx:stable-alpine"
