@@ -3,6 +3,11 @@ variable "cluster_name" {
   type        = string
 }
 
+variable "cluster_arn" {
+  description = "ARN of the ECS cluster this service should register with."
+  type        = string
+}
+
 variable "service_name" {
   description = "Name of the ECS service and task family."
   type        = string

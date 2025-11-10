@@ -51,7 +51,8 @@ Open the `alb_url` root in your browser to verify the React build is served. The
 ## Module overview
 - `modules/vpc`: VPC, subnets (public/private), Internet Gateway, optional NAT Gateway.
 - `modules/alb`: Security group, Application Load Balancer, frontend target group, listener (default action). A backend path rule is defined in the root module.
-- `modules/ecs`: ECS cluster, IAM roles, CloudWatch log group, Fargate task definition & service, and Application Auto Scaling. Instantiated twice (backend + frontend).
+- `aws_ecs_cluster` (root): Single ECS cluster reused by both services so you only pay for one control plane.
+- `modules/ecs`: IAM roles, CloudWatch log group, Fargate task definition & service, and Application Auto Scaling. Instantiated twice (backend + frontend) and pointed at the shared cluster.
 
 ## Build & push container images
 1. Create two ECR repositories (or reuse existing ones) for backend and frontend:

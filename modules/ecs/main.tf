@@ -79,19 +79,6 @@ resource "aws_iam_role" "task" {
   tags = var.tags
 }
 
-resource "aws_ecs_cluster" "this" {
-  name = var.cluster_name
-
-  setting {
-    name  = "containerInsights"
-    value = "disabled"
-  }
-
-  tags = merge(var.tags, {
-    Name = var.cluster_name
-  })
-}
-
 resource "aws_ecs_task_definition" "this" {
   family                   = var.service_name
   network_mode             = "awsvpc"
@@ -135,7 +122,7 @@ resource "aws_ecs_task_definition" "this" {
 
 resource "aws_ecs_service" "this" {
   name            = var.service_name
-  cluster         = aws_ecs_cluster.this.id
+  cluster         = var.cluster_arn
   task_definition = aws_ecs_task_definition.this.arn
   desired_count   = var.desired_count
   launch_type     = "FARGATE"
@@ -149,7 +136,7 @@ resource "aws_ecs_service" "this" {
   network_configuration {
     subnets          = var.subnet_ids
     security_groups  = [aws_security_group.tasks.id]
-    assign_public_ip = var.assign_public_ip
+    assign_public_ip = var.assign_public_ip 
   }
 
   deployment_controller {
@@ -168,7 +155,7 @@ resource "aws_ecs_service" "this" {
 resource "aws_appautoscaling_target" "ecs" {
   max_capacity       = var.max_capacity
   min_capacity       = var.min_capacity
-  resource_id        = "service/${aws_ecs_cluster.this.name}/${aws_ecs_service.this.name}"
+  resource_id        = "service/${var.cluster_name}/${aws_ecs_service.this.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
 }

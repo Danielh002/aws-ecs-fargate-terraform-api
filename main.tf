@@ -15,6 +15,7 @@ provider "aws" {
 
 locals {
   resource_prefix = "${var.project_name}-${var.environment}"
+  cluster_name    = "${var.project_name}-${var.environment}-cluster"
 
   common_tags = merge(
     {
@@ -24,6 +25,19 @@ locals {
     },
     var.additional_tags,
   )
+}
+
+resource "aws_ecs_cluster" "this" {
+  name = local.cluster_name
+
+  setting {
+    name  = "containerInsights"
+    value = "disabled"
+  }
+
+  tags = merge(local.common_tags, {
+    Name = local.cluster_name
+  })
 }
 
 module "vpc" {
@@ -89,7 +103,8 @@ resource "aws_lb_listener_rule" "backend" {
 module "ecs_backend" {
   source = "./modules/ecs"
 
-  cluster_name          = "${local.resource_prefix}-backend-cluster"
+  cluster_name          = aws_ecs_cluster.this.name
+  cluster_arn           = aws_ecs_cluster.this.arn
   service_name          = "${local.resource_prefix}-backend-service"
   vpc_id                = module.vpc.vpc_id
   subnet_ids            = module.vpc.public_subnet_ids
@@ -113,7 +128,8 @@ module "ecs_backend" {
 module "ecs_frontend" {
   source = "./modules/ecs"
 
-  cluster_name          = "${local.resource_prefix}-frontend-cluster"
+  cluster_name          = aws_ecs_cluster.this.name
+  cluster_arn           = aws_ecs_cluster.this.arn
   service_name          = "${local.resource_prefix}-frontend-service"
   vpc_id                = module.vpc.vpc_id
   subnet_ids            = module.vpc.public_subnet_ids
