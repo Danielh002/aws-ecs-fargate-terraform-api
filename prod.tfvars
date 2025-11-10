@@ -6,6 +6,7 @@ owner        = "platform-team"
 backend_container_image   = "public.ecr.aws/docker/library/node:18-alpine"
 backend_container_port    = 3000
 backend_health_check_path = "/health"
+backend_allowed_origins   = []
 
 frontend_container_image   = "public.ecr.aws/nginx/nginx:stable-alpine"
 frontend_container_port    = 80

@@ -39,7 +39,10 @@ curl http://$(terraform output -raw alb_url)/api/health
 ```
 
 ### Frontend
-Open the `alb_url` root in your browser to verify the React build is served. The frontend container should listen on `frontend_container_port` (default 80); update `frontend_health_check_path` if your static host uses a different path.
+Open the `alb_url` root in your browser to verify the React build is served. Because the SPA now defaults to the current origin, API calls automatically hit `<alb_url>/api/...`, but you can still override via `VITE_API_URL` during local dev or testing.
+
+### CORS
+`backend_allowed_origins` (list) controls which origins the NestJS API accepts. Terraform also appends the ALB DNS name automatically and ships it via the `FRONTEND_ORIGINS` env var so browsers hitting the load balancer won’t see CORS errors.
 
 ## Staying within the Free Tier
 - **Fargate tasks**: Defaults to 0.25 vCPU / 0.5 GB for both services and runs a single task per service with autoscaling between 1–2 tasks based on CPU.

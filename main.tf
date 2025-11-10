@@ -122,6 +122,17 @@ module "ecs_backend" {
   scale_cpu_threshold   = var.backend_autoscaling_cpu_threshold
   environment           = var.environment
   region                = var.region
+  environment_variables = {
+    FRONTEND_ORIGINS = join(
+      ",",
+      distinct(
+        concat(
+          var.backend_allowed_origins,
+          ["http://${module.alb.alb_dns_name}"]
+        )
+      )
+    )
+  }
   tags                  = local.common_tags
 }
 

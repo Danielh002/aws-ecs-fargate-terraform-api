@@ -94,6 +94,12 @@ variable "region" {
   type        = string
 }
 
+variable "environment_variables" {
+  description = "Additional environment variables to inject into the container."
+  type        = map(string)
+  default     = {}
+}
+
 variable "tags" {
   description = "Tags applied to all ECS resources."
   type        = map(string)

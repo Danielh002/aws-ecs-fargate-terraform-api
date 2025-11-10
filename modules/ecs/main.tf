@@ -1,5 +1,19 @@
 locals {
-  container_name = "app"
+  container_name      = "app"
+  container_environment = concat(
+    [
+      {
+        name  = "NODE_ENV"
+        value = var.environment
+      }
+    ],
+    [
+      for key, value in var.environment_variables : {
+        name  = key
+        value = value
+      }
+    ]
+  )
 }
 
 resource "aws_security_group" "tasks" {
@@ -108,12 +122,7 @@ resource "aws_ecs_task_definition" "this" {
           awslogs-stream-prefix = local.container_name
         }
       }
-      environment = [
-        {
-          name  = "NODE_ENV"
-          value = var.environment
-        }
-      ]
+      environment = local.container_environment
     }
   ])
 

@@ -64,6 +64,12 @@ variable "backend_health_check_path" {
   default     = "/"
 }
 
+variable "backend_allowed_origins" {
+  description = "List of origins allowed to call the backend API (comma-joined and pushed to FRONTEND_ORIGINS)."
+  type        = list(string)
+  default     = ["http://localhost:5173"]
+}
+
 variable "assign_public_ip" {
   description = "Assign a public IP to the Fargate tasks (avoids NAT charges when true)."
   type        = bool
